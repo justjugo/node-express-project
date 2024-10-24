@@ -88,19 +88,17 @@ router.put('/user/edit/:id', async (req, res) => {
 // Delite costumer
 
 
-router.get('/delite/:id', async(req, res) => {
+router.delete('/delete/:id', async(req, res) => {
   try{
     const id=req.params.id
-    await Costumer.findByIdAndDelete({_id:id})
+    await Costumer.deleteOne({_id:id})
     res.redirect('/costumer')
 
   }catch(err)
   {
     res.render('404')
-  }
+  } 
   
-  
-  res.render('index')
 })
 
 module.exports =router;
