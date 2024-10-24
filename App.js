@@ -1,10 +1,11 @@
 const express = require('express');
-const csurf = require('csurf');
+const app = express();
 const path = require("path");
 const livereload = require("livereload");
 const connectLivereload = require("connect-livereload");
-const moment=require('moment')
-const app = express();
+var methodOverride = require('method-override')
+app.use(methodOverride('_method'))
+
 const costumerRoute = require('./routes/costumer.js');
 
 // Database connection
