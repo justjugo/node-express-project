@@ -3,25 +3,33 @@ const app = express();
 const path = require("path");
 const livereload = require("livereload");
 const connectLivereload = require("connect-livereload");
-var methodOverride = require('method-override')
-app.use(methodOverride('_method'))
+const session = require('express-session'); // Import express-session
+const methodOverride = require('method-override');
 
-const costumerRoute = require('./routes/costumer.js');
+// Middleware to handle HTTP method override
+app.use(methodOverride('_method'));
+
+// Middleware for parsing JSON and URL-encoded form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Session configuration
+app.use(session({
+  secret: 'mysecretkey',
+  resave: false,
+  saveUninitialized: false,
+}));
 
 // Database connection
 require('./config/connect');
 
-// Set the view engine
+// Set view engine
 app.set('view engine', 'ejs');
 
-// Middleware for parsing request bodies
-app.use(express.urlencoded({ extended: true })); // To handle form data
-app.use(express.json()); // To handle JSON data
-
-// Serve static files
+// Serve static files from "public" directory
 app.use(express.static('public'));
 
-// Setup livereload
+// Setup livereload for development
 const liveReloadServer = livereload.createServer();
 liveReloadServer.watch(path.join(__dirname, 'public'));
 app.use(connectLivereload());
@@ -33,8 +41,12 @@ liveReloadServer.server.once("connection", () => {
   }, 100);
 });
 
-// Use the customer route
+// Import and use routes
+const costumerRoute = require('./routes/costumer.js');
+const userRoute = require('./routes/user.js');
+
 app.use('/costumer', costumerRoute);
+app.use('/user', userRoute);
 
 // Start the server
 app.listen(3000, () => {
